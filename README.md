@@ -37,8 +37,8 @@ DESTDIR=$PWD/build/install cmake --build build --target install
 Install the [googletest](https://github.com/google/googletest) dependency:
 
 ```sh
-sudo dnf install gtest-devel    # Fedora
-sudo apt install libgtest-dev   # Ubuntu
+sudo dnf install gmock-devel    # Fedora
+sudo apt install libgmock-dev   # Ubuntu
 ```
 
 Build and run the tests:
