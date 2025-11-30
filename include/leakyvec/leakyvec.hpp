@@ -1,7 +1,31 @@
 #pragma once
+#include <tuple>
 #include <vector>
 
 namespace leaky {
+
+namespace detail {
+    template<typename T, typename Alloc = typename std::vector<T>::allocator_type>
+    struct VecWrapper
+    {
+        using pointer = typename std::vector<T, Alloc>::pointer;
+        std::vector<T, Alloc> inner;
+
+        [[nodiscard]] pointer get_data_start() noexcept { return inner.data(); }
+
+        [[nodiscard]] pointer get_data_end() noexcept
+        {
+            // One past the end of the initialized data
+            return inner.data() + inner.size();
+        }
+
+        [[nodiscard]] pointer get_capacity_end() noexcept
+        {
+            // One past the end of the allocated capacity
+            return inner.data() + inner.capacity();
+        }
+    };
+}  // namespace detail
 
 /// @brief a wrapper around std::vector that allows leaking its contents and transfering ownership
 ///
@@ -11,7 +35,7 @@ template<typename T, typename Alloc = typename std::vector<T>::allocator_type>
 class Vec
 {
   private:
-    std::vector<T, Alloc> m_inner;
+    detail::VecWrapper<T, Alloc> m_inner;
 
   public:
     /// @brief Create a leaky Vec from a std::vector. Takes exclusive ownership.
