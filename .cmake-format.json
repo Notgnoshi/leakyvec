@@ -1,0 +1,10 @@
+{
+    "line_width": 100,
+    "tab_size": 4,
+    "max_pargs_hwrap": 3,
+    "dangle_parens": true,
+    "enable_sort": true,
+    "autosort": true,
+    "enable_markup": true,
+    "literal_comment_pattern": "    .*"
+}
