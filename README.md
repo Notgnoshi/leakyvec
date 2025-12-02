@@ -15,7 +15,19 @@ This is mostly just an experiment to see if it's possible; I'm not sure I'd reco
 ```cpp
 #include <leakyvec/leakyvec.hpp>
 
-// TODO
+auto vec = std::vector<int>{1, 2, 3, 4};
+auto leaky_vec = leaky::Vec<int>(std::move(vec));
+auto parts = leaky_vec.leak();
+
+// Either transfer ownership back to a std::vector like so:
+auto leaky_vec2 = leaky::Vec<int>::from_parts(parts);
+auto vec2 = leaky_vec2.take();
+
+// ... or manually delete the leaked memory with the allocator:
+auto [data, size, capacity, allocator] = parts;
+alloc.deallocate(data, capacity);
+
+// But don't do both! :)
 ```
 
 ## Demo transferring memory ownership from C++ to Rust
@@ -49,3 +61,8 @@ cmake --build build --parallel
 ctest --test-dir build          # Use CTest
 ./build/tests/leakyvec-tests    # Run the test binary directly
 ```
+
+### How to run the tests with ASAN / UBSAN?
+
+Add `-DLEAKY_USE_ASAN=ON` or `-DLEAKY_USE_UBSAN=ON` to the CMake command above. You need to delete
+the build directory and reconfigure CMake after changing these options.
